@@ -48,6 +48,7 @@ function initGoogle(loc) {
     var gmAPI = new GoogleMapsAPI(publicConfig);
     return gmAPI;
 }
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
     res.render('index', { title: 'NomNom' });
@@ -69,21 +70,27 @@ router.post('/',function(req,res, next) {
             parameters['google'] = result.results[0].geometry.location;
             var lat = result.results[0].geometry.location.lat;
             var lng = result.results[0].geometry.location.lng;
-            var coor = lat +','+lng
-            yelp.search({term: term, ll: coor, sort: '1', radius_filter: '1610'})
-                .then(function (data) {
-                    var s = JSON.stringify(data);
-                    var obj = JSON.parse(s);
-                    var yelpRes = obj.businesses;
-                    parameters['result'] = yelpRes;
-                    // mongoose.model('rest', {term: String, loc: String});
-                    res.render('search', parameters);
-                })
-                .catch(function (err) {
-                    console.log('error_yelp');
-                    parameters['result'] = "None";
-                    res.render('search', parameters);
-                });
+            console.log("google: ", google);
+            //var coor = lat +','+lng
+            //yelp.search({term: term, ll: coor, sort: '1', radius_filter: '1610'})
+                //.then(function (data) {
+                    //var s = JSON.stringify(data);
+                    //var obj = JSON.parse(s);
+                    //var yelpRes = obj.businesses;
+                    //parameters['result'] = yelpRes;
+                    //res.render('search', parameters);
+                //})
+                //.catch(function (err) {
+                    //console.log('error_yelp');
+                    //parameters['result'] = "None";
+                    //res.render('search', parameters);
+                //});
+            var factual = initFactual();
+            factual.get('/t/restaurants-us', {q:term, geo:{"$circle":{"$center":[lat,lng],"$meters":1000}}, filters:{"category_ids":{"$includes":347}}}, function (error, resFac) {
+                console.log("factual: ",resFac.data);
+                parameters['resultTest'] = resFac.data;
+                res.render('search', parameters);
+            });
         } else {
             yelp.search({term: term, location: loc, sort: '1', radius_filter: '1610'})
                 .then(function (data) {

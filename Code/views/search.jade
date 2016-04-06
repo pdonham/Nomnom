@@ -66,7 +66,10 @@ if (result !== 'None')
                                         else
                                             | Food Truck
                                 p
-                                    img(src='../images/Rating/'+r.rating+'.png', alt=r.name+" Rating", height="25", width="125")
+                                    if (r.rating_img_url == undefined)
+                                        img(src='../images/Rating/'+r.rating+'.png', alt=r.name+" Rating", height="25", width="125")
+                                    else
+                                        img(src=r.rating_img_url_large, alt=r.name+" Rating", height="25", width="125")
                                     | #{" "}
                                     a(href="http://www.yelp.com/biz/"+r.id) #{r.review_count + " Yelp reviews"}
                                     br
